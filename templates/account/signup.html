@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Signup{% endblock %}
+
+{% block content %}
+<a href="{% url 'task:tasklist' %}">Login Page</a>
+<div class="uk-container" >
+    <form action="{% url 'task:signup' %}" method="post">
+    {% csrf_token %}
+    <fieldset class="uk-fieldset">
+        <legend class="uk-legend">Sign Up</legend>
+        {% for field in form %}
+        <div class="uk-margin">
+        	{{ field.label_tag }}<br>
+	        {{ field }}
+        </div>
+        {% if field.help_text %}
+          <small style="color: grey">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+    {% endfor %}
+    </fieldset>
+    <input type="submit" class="uk-button uk-button-primary uk-align-center" value="SignUp">
+</form>
+</div>
+{% endblock %}

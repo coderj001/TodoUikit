@@ -1,1 +1,99 @@
-{% block title %}Todo{% endblock %}
+{% extends "base.html" %}
+{% block title %} Todo {% endblock %}
+{% block content %}
+
+
+{% if request.user.is_authenticated %}
+<div class="uk-float-right">
+    <button class="uk-button-default uk-button-danger"><a href="{% url 'task:logout' %}">LOGOUT</a></button>
+</div>
+<div class="uk-container" >
+    <form action="{% url 'task:add' %}" method="post">
+    {% csrf_token %}
+    <fieldset class="uk-fieldset">
+        <legend class="uk-legend">Add Task</legend>
+        <div class="uk-margin">
+            <label for="task_title" class="uk-form-label">Title</label>
+            <input class="uk-input" type="text" placeholder="Input" name="task_title" value="">
+        </div>
+        <div class="uk-margin">
+            <label for="task_desciption" class="uk-form-label">Desciption</label>
+            <textarea class="uk-textarea" rows="5" placeholder="Optional" name="task_desciption"></textarea>
+        </div>
+    </fieldset>
+    <input type="submit" class="uk-button uk-button-primary uk-align-center" value="Add">
+</form>
+</div>
+<div class="uk-padding-large">
+    {% if tasks %}
+    <table class="uk-table uk-table-responsive">
+        <caption>Total Task {{ tasks.count }}</caption>
+        <thead>
+            <tr>
+                <th>Task</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>
+                    {% if task.task_desciption %}
+                    <span class="uk-text-bold uk-text-capitalize" uk-tooltip="Check Desciption">
+                        <a href="#id-{{ task.task_id }}" uk-toggle>
+                            {{ task.task_title }}
+                        </a></span>
+                    {% else %}
+                    <span class="uk-text-bold uk-text-capitalize">{{ task.task_title }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                	{% if task.task_status %}
+                		<a href="{% url 'task:edit' task.task_id %}" uk-icon="icon: refresh"></a>
+                	{% else %}
+	                	<a href="{% url 'task:edit' task.task_id %}" uk-icon="icon: check"></a>
+                	{% endif %}
+                </td>
+                <td>{{ task.task_updated | date:"D, j M, g:i a" }}</td>
+                <td><a href="{{ task.get_absolute_url }}" uk-icon="icon: pencil"></a></td>
+                <td><a href="{% url 'task:delete' task.task_id %}" uk-icon="icon: trash"></a></td>
+            </tr>
+            <div id="id-{{ task.task_id }}" uk-modal>
+                <div class="uk-modal-dialog uk-modal-body">
+                    <button class="uk-modal-close-outside" type="button" uk-close></button>
+                    <h2 class="uk-modal-title">{{ task.task_title }}</h2>
+                    <p>
+                    	{{ task.task_desciption }}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    {% endif %}
+</div>
+{% else %}
+<a href="{% url 'task:signup' %}">SignUp Page</a>
+<div class="uk-container" >
+    <form action="{% url 'task:login' %}" method="post">
+    {% csrf_token %}
+    <fieldset class="uk-fieldset">
+        <legend class="uk-legend">Login</legend>
+        <div class="uk-margin">
+            <label for="username" class="uk-form-label">Username</label>
+            <input class="uk-input" type="text" placeholder="username" name="username" value="">
+        </div>
+        <div class="uk-margin">
+            <label for="password" class="uk-form-label">Password</label>
+            <input class="uk-input" type="password" placeholder="password" name="password" value="">
+        </div>
+    </fieldset>
+    <input type="submit" class="uk-button uk-button-primary uk-align-center" value="Login">
+</form>
+</div>
+{% endif %}
+{% endblock %}

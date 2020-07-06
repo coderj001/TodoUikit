@@ -1,13 +1,6 @@
 from django.db import models
-
-COLOR_CHOICE=(
-		('BLACK','black'),
-		('BLUE','blue'),
-		('RED','red'),
-		('GREEN','green'),
-		('YELLOW','yellow'),
-		('WHITE','white'),
-	)
+from django.shortcuts import reverse
+from django.contrib.auth.models import User
 
 class Task(models.Model):
 	task_id=models.AutoField(
@@ -32,16 +25,12 @@ class Task(models.Model):
 		editable=True,
 		verbose_name='Date on update'
 		)
-	task_color=models.CharField(
-		choices=COLOR_CHOICE,
-		max_length=6,
-		default='WHITE'
-		)
 	task_status=models.BooleanField(default=False)
+	task_user=models.ForeignKey(User, on_delete=models.CASCADE)
 	def __str__(self):
 		if len(self.task_title) < 10:
 			return f'{self.task_id} - {self.task_title}'
 		else:
 			return f'{self.task_id} - {self.task_title[:10]}..'
 	def get_absolute_url(self):
-		pass
+		return reverse('task:taskdetail', kwargs={'pk':self.task_id})

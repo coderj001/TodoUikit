@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Detail{% endblock %}
+
+{% block content %}
+<div class="uk-container">
+{% if task %}
+
+<form action="{% url 'task:update' task.task_id %}" method="post">
+	{% csrf_token %}
+    <fieldset class="uk-fieldset">
+        <legend class="uk-legend">Edit Task</legend>
+        <div class="uk-margin">
+        	<label for="task_title" class="uk-form-label">Title</label>
+            <input class="uk-input" type="text" placeholder="{{ task.task_title }}" name="task_title" value="{{ task.task_title }}">
+        </div>
+        <div class="uk-margin">
+        	<label for="task_desciption" class="uk-form-label">Desciption</label>
+			<textarea class="uk-textarea" rows="5" placeholder="Optional" name="task_desciption" value=""></textarea>
+        </div>
+    </fieldset>
+    <input type="submit" class="uk-button uk-button-primary uk-align-center" value="Submit">
+</form>
+
+{% if task.task_desciption %}
+<script>
+    var ts=document.getElementsByTagName('textarea')[0]
+    ts.innerHTML="{{ task.task_desciption }}";
+</script>
+{% endif %}
+{% endif %}
+</div>
+{% endblock %}
